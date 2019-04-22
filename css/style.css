@@ -5359,7 +5359,7 @@ pre{
   background-repeat: no-repeat;
 }
 .sm-video-bg {
-  background-image: url(../video/earth-bg-5.png);
+  background-image: url(img/earth-bg-5.png);
   background-position: 50% 0px;
   overflow: hidden;
   position:relative;
@@ -12008,7 +12008,7 @@ h2.portfolio-timeline-title {
 }
 /* mouse grab icon */
 .grabbing { 
-  cursor:url(grabbing.png) 8 8, move;
+  cursor:url(img/grabbing.png) 8 8, move;
 }
 /* fix */
 .owl-carousel  .owl-wrapper,
@@ -14414,7 +14414,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
     font-size:22px;
 }
 .plan-bg {
-    background-image: url(../images/revision/plan-bg.jpg);
+    background-image: url(img/plan-bg.jpg);
     background-position: 100% 0;
     overflow: hidden;
     position: relative;
