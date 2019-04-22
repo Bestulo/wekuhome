@@ -24,7 +24,7 @@ const getFirstImage = body =>
   || 'https://wekuwebsite.com/images/logo.png' // edit to proper logo
 
 $(document).ready(() =>
-  get3Posts('weku-account').then(post =>
+  get3Posts('mazinga').then(post =>
     cardIds.map(getCardDetails).forEach(card => {
 
       const postImage = getFirstImage(post.body)
