@@ -39,7 +39,6 @@
 	  gtag('config', 'UA-111767467-1');
   </script>
   <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
-  <script src="js/steempuller.js"></script>
 </head>
 <body class="font-raleway">
 <!-- LOADER -->
@@ -683,29 +682,30 @@
 <!-- MAIN SCRIPT -->
 <script src="js/main.js"></script>
 <!-- WeKu Chain Info -->
-    <script>
-        $(document).ready(function(){
-            //setInterval(getCurrentBlock, 30000);
-        	// animated scroll blockl\
-	        AOS.init();
-            var myVideo = document.getElementById("video_background"); 
-            myVideo.muted = "true"; 
-            myVideo.play();
-	        //ios menu animation
-	        $('#menu-btn').click(function(){
-		        $(this).toggleClass('open');
-	        });
+<script>
+    $(document).ready(function(){
+        //setInterval(getCurrentBlock, 30000);
+      // animated scroll blockl\
+      AOS.init();
+        var myVideo = document.getElementById("video_background"); 
+        myVideo.muted = "true"; 
+        myVideo.play();
+      //ios menu animation
+      $('#menu-btn').click(function(){
+        $(this).toggleClass('open');
+      });
+    });
+    function getCurrentBlock(){
+        $.ajax({
+            url: '/getCurrentBlock',
+            success: function(data){
+                $("#blockNumber").html(data.currentBlockNumber);
+                $("#blockContent").html(data.blockContent);
+            }
         });
-        function getCurrentBlock(){
-            $.ajax({
-                url: '/getCurrentBlock',
-                success: function(data){
-                    $("#blockNumber").html(data.currentBlockNumber);
-                    $("#blockContent").html(data.blockContent);
-                }
-            });
-        }
-    </script>
+    }
+</script>
+<script src="js/steempuller.js"></script>
 <!-- JS end -->
 <center><font size="2">This is the free demo result. For a full version of this website, please go to  <a href="https://www6.waybackmachinedownloader.com/website-downloader-online/scrape-all-files/">https://www6.waybackmachinedownloader.com/website-downloader-online/scrape-all-files/</a></font></center></body>
 </html>
