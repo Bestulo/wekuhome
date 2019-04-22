@@ -7,33 +7,60 @@ const get3Posts = author =>
     steem.api.getDiscussionsByBlog({ tag: author, limit: 3 }, (err, results) =>
       err ? reject(err) : resolve(results)))
 
-const firstNCharacters = (n, str) =>
-  str.substring(0,n)
+function strip(html) {
+    var tmp = document.createElement("DIV");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || "";
+}
+
+const firstNCharacters = (n, text) => {
+  text = text.replace(/!\[]\((http\S+(?:\.jpg|\.png|.gif))\)/, '$1')
+  text = text.replace(/\[.+?]\((http\S+)\)/, '')
+  text = text.replace(/ http\S+(?:\.jpg|\.png|\.gif) /g, '')
+  text = text.replace(/http\S+(?:\.jpg|\.png|\.gif) /g, '')
+  text = text.replace(/ http\S+(?:\.jpg|\.png|\.gif)/g, '')
+  text = text.replace(/http\S+(?:\.jpg|\.png|\.gif)/g, '')
+  text = text.replace(/!\[\]\(\)/, '')
+  text = text.replace(/https?:\/\/\S+/, '')
+  text = text.replace(/\*+/g, '')
+  text = strip(text)
+  text = text.substring(0, n).trim() + '...'
+  return text
+}
 
 const getCardDetails = cardId =>
   ({
-    imgId: "post-img" + cardId,
+    imgId: "img-post-" + cardId,
     titleId: "ttl-post-" + cardId,
-    bodyId: "bdy-post-" + cardId
+    bodyId: "bdy-post-" + cardId,
+    wrapperId: "wrapper-" + cardId
   })
 
 const cardIds = [1,2,3].map(String)
 
 const getFirstImage = body =>
-  body.match(/https?:\/\/.*\.(?:png|jpg)/i)[1]
-  || 'https://wekuwebsite.com/images/logo.png' // edit to proper logo
+  body.match(/https?:\/\/.+?\.(?:png|jpg)/i)[0]
+  // || 'https://i.imgur.com/3cQIBTK.jpg' // edit to Weku logo or something
 
 $(document).ready(() =>
-  get3Posts('mazinga').then(post =>
-    cardIds.map(getCardDetails).forEach(card => {
+  get3Posts('mazinga').then(posts =>
+    cardIds.map(getCardDetails).forEach((card, i) => {
+      const post = posts[i]
 
       const postImage = getFirstImage(post.body)
-      let postTitle = firstNCharacters(50, post.title)
+      const defaultImage = 'https://i.imgur.com/3cQIBTK.jpg'
+      console.log(postImage)
+
+      let postTitle = firstNCharacters(35, post.title)
       let postBody = firstNCharacters(150, post.body)
       if (post.title.length > postTitle) postTitle += '...'
       if (post.body.length > postBody) postBody += '...'
 
-      $('#' + card.imgId).attr(src, postImage)
+      if (postImage) $('#' + card.imgId).css("background-image", `url(${postImage})`)
+      else $('#' + card.imgId).css("background-image", `url(${defaultImage})`)
       $('#' + card.titleId).text(postTitle)
       $('#' + card.bodyId).text(postBody)
+
+      $('#' + card.wrapperId).attr('href', 'https://deals.weku.io/@' + post.author + '/' + post.permlink)
+
     })))
