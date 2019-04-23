@@ -38,9 +38,14 @@ const getCardDetails = cardId =>
 
 const cardIds = [1,2,3].map(String)
 
-const getFirstImage = body =>
-  body.match(/https?:\/\/.+?\.(?:png|jpg)/i)[0]
-  // || 'https://i.imgur.com/3cQIBTK.jpg' // edit to Weku logo or something
+const log = v => (console.log(v), v)
+
+const getFirstImage = body =>{
+  const res = body.match(/https?:\/\/.+?\.(?:png|jpg)/i)
+  return res && res.length
+    ? res[0]
+    : 'images/revision/default.png' // Default image in case post has no image
+}
 
 $(document).ready(() =>
   get3Posts('mazinga').then(posts =>
