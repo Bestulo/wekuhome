@@ -2,9 +2,9 @@ steem.api.setOptions({ url: 'wss://standby.weku.io:8190' });
 steem.config.set('address_prefix', "WKA");
 steem.config.set('chain_id', "b24e09256ee14bab6d58bfa3a4e47b0474a73ef4d6c47eeea007848195fa085e");
 
-const get3Posts = author =>
+const get20Posts = author =>
   new Promise((resolve, reject) =>
-    steem.api.getDiscussionsByBlog({ tag: author, limit: 3 }, (err, results) =>
+    steem.api.getDiscussionsByBlog({ tag: author, limit: 20 }, (err, results) =>
       err ? reject(err) : resolve(results)))
 
 function strip(html) {
@@ -48,13 +48,20 @@ const getFirstImage = body =>{
 }
 
 $(document).ready(() =>
-  get3Posts('mazinga').then(posts =>
-    cardIds.map(getCardDetails).forEach((card, i) => {
-      const post = posts[i]
+  get20Posts('mazinga').then(posts =>
+    cardIds
+    .map(getCardDetails)
+    .forEach((card, i) => {
 
+      posts = posts.filter(post => {
+        const json = JSON.stringify(post.json_metadata)
+        const tags = json.tags
+        return tags.includes('push-announcement')
+      })
+
+      const post = posts[i]
       const postImage = getFirstImage(post.body)
       const defaultImage = 'https://i.imgur.com/3cQIBTK.jpg'
-      console.log(postImage)
 
       let postTitle = firstNCharacters(35, post.title)
       let postBody = firstNCharacters(150, post.body)
@@ -62,10 +69,8 @@ $(document).ready(() =>
       if (post.body.length > postBody) postBody += '...'
 
       if (postImage) $('#' + card.imgId).css("background-image", `url(${postImage})`)
-      else $('#' + card.imgId).css("background-image", `url(${defaultImage})`)
+      else $('#' + card.imgId).css("background-image", `url('images/revision/default.png')`)
       $('#' + card.titleId).text(postTitle)
       $('#' + card.bodyId).text(postBody)
-
       $('#' + card.wrapperId).attr('href', 'https://deals.weku.io/@' + post.author + '/' + post.permlink)
-
     })))
