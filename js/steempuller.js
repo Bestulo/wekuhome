@@ -2,9 +2,9 @@ steem.api.setOptions({ url: 'wss://standby.weku.io:8190' });
 steem.config.set('address_prefix', "WKA");
 steem.config.set('chain_id', "b24e09256ee14bab6d58bfa3a4e47b0474a73ef4d6c47eeea007848195fa085e");
 
-const get20Posts = author =>
+const getXPosts = (x, author) =>
   new Promise((resolve, reject) =>
-    steem.api.getDiscussionsByBlog({ tag: author, limit: 20 }, (err, results) =>
+    steem.api.getDiscussionsByBlog({ tag: author, limit: x }, (err, results) =>
       err ? reject(err) : resolve(results)))
 
 function strip(html) {
@@ -48,20 +48,22 @@ const getFirstImage = body =>{
 }
 
 $(document).ready(() =>
-  get20Posts('mazinga').then(posts =>
+  getXPosts(10, 'mazinga').then(posts => // gets 10 posts from the given author
     cardIds
     .map(getCardDetails)
     .forEach((card, i) => {
 
-      posts = posts.filter(post => {
-        const json = JSON.stringify(post.json_metadata)
-        const tags = json.tags
-        return tags.includes('push-announcement')
-      })
+      // posts = posts.filter(post => {
+      //   const json = JSON.stringify(post.json_metadata)
+      //   const tags = json.tags
+      //   return tags.includes('push-announcement')
+      // })
+
+      posts = shuffle(posts).slice(0,3) // shuffles the posts and gets the first 3
 
       const post = posts[i]
       const postImage = getFirstImage(post.body)
-      const defaultImage = 'https://i.imgur.com/3cQIBTK.jpg'
+      const defaultImage = 'images/revision/default.png'
 
       let postTitle = firstNCharacters(35, post.title)
       let postBody = firstNCharacters(150, post.body)
@@ -69,7 +71,7 @@ $(document).ready(() =>
       if (post.body.length > postBody) postBody += '...'
 
       if (postImage) $('#' + card.imgId).css("background-image", `url(${postImage})`)
-      else $('#' + card.imgId).css("background-image", `url('images/revision/default.png')`)
+      else $('#' + card.imgId).css("background-image", `url('${defaultImage}')`)
       $('#' + card.titleId).text(postTitle)
       $('#' + card.bodyId).text(postBody)
       $('#' + card.wrapperId).attr('href', 'https://deals.weku.io/@' + post.author + '/' + post.permlink)
