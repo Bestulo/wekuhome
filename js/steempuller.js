@@ -47,19 +47,27 @@ const getFirstImage = body =>{
     : 'images/revision/default.png' // Default image in case post has no image
 }
 
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1)); // random index from 0 to i
+    [array[i], array[j]] = [array[j], array[i]]; // swap elements
+  }
+  return array
+}
+
 $(document).ready(() =>
-  getXPosts(10, 'mazinga').then(posts => // gets 10 posts from the given author
-    cardIds
-    .map(getCardDetails)
-    .forEach((card, i) => {
+  getXPosts(10, 'mazinga').then(posts => { // gets 10 posts from the given author
+    
+    const shuffledPosts = shuffle(posts) // shuffles them
+    posts = shuffledPosts.slice(0,3) // and grabs the first 3
+    
+    cardIds.map(getCardDetails).forEach((card, i) => {
 
       // posts = posts.filter(post => {
       //   const json = JSON.stringify(post.json_metadata)
       //   const tags = json.tags
       //   return tags.includes('push-announcement')
       // })
-
-      posts = shuffle(posts).slice(0,3) // shuffles the posts and gets the first 3
 
       const post = posts[i]
       const postImage = getFirstImage(post.body)
@@ -75,4 +83,5 @@ $(document).ready(() =>
       $('#' + card.titleId).text(postTitle)
       $('#' + card.bodyId).text(postBody)
       $('#' + card.wrapperId).attr('href', 'https://deals.weku.io/@' + post.author + '/' + post.permlink)
-    })))
+    })
+  }))
